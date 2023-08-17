@@ -3,10 +3,10 @@ import numpy as np
 import utils
 
 class GeneticRemovingZeros:
-    population_size = 250
-    nsurv = 50
+    population_size = 100
+    nsurv = 20
     nnew = population_size - nsurv
-    epochs = 500
+    epochs = 200
     mut = 0.25
 
     def __init__(self, checkpoint_count:int) -> None:
@@ -29,7 +29,7 @@ class GeneticRemovingZeros:
             np.array: потомок
         """
         bots = curr_popul[np.random.randint(0, self.__class__.nsurv - 1, size=2)]
-        indexes = np.random.choice(2, size=10)
+        indexes = np.random.choice(2, size=self.bot_length)
         bots[0,np.where(indexes==1)[0]] = 0
         bots[1,np.where(indexes==0)[0]] = 0
         return bots.sum(axis=0)
@@ -49,13 +49,13 @@ class GeneticRemovingZeros:
             for i, bot in enumerate(self.popul):
                 cut_field = utils.cut_matrix(field, bot)
                 if np.where(cut_field==0)[0].size == 0:
-                    validation[i] = cut_field.size
+                    validation[i] = cut_field.size - np.abs(bot.sum() - self.bot_length//2) * 10
                 else:
-                    validation[i] = -cut_field.size
+                    validation[i] = -cut_field.size - np.abs(bot.sum() - self.bot_length//2) * 10
             new_popul = self.popul[validation.argsort()[::-1]]
             for i in range(self.__class__.nnew):
                 new_popul[self.__class__.nsurv+i] = self.cross_point(new_popul)
                 if np.random.random() < self.__class__.mut:
                     new_popul[self.__class__.nsurv+i] = np.random.choice(2, size=self.bot_length)
             self.popul = new_popul
-        return self.popul[0]
+        return self.popul[0], validation[0]
