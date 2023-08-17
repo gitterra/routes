@@ -42,13 +42,13 @@ def cut_matrix(field: np.array, params: np.array) -> np.array:
         np.array: результирующая матрица (временная карта)
     """
     length = field.shape[0]
-    row_indexes = np.where(params[:length]==1)[0]
-    col_indexes = np.where(params[length:]==1)[0]
+    row_indexes = np.where(params[:length]==0)[0]
+    col_indexes = np.where(params[length:]==0)[0]
     if row_indexes.size==0:
         return field[:, col_indexes]
     elif col_indexes.size==0:
         return field[row_indexes, :]
     else:
-        tmp = cut_matrix[row_indexes, :]
+        tmp = field[row_indexes, :]
         return tmp[:, col_indexes]
 
