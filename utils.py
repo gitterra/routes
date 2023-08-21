@@ -52,3 +52,8 @@ def cut_matrix(field: np.array, params: np.array) -> np.array:
         tmp = field[row_indexes, :]
         return tmp[:, col_indexes]
 
+
+def rearrange_positions(array, positions, index):
+    ones_indices = np.where(array == index)[0]
+    rearranged_indices = [ones_indices[pos] for pos in positions]
+    return rearranged_indices
